@@ -9,12 +9,12 @@
 AppId={{E7415235-805D-4B5F-91F7-5F23E25E8B65}
 AppName={#MyAppName}
 AppPublisher={#MyAppPublisher}
-AppVersion=0.1.9
+AppVersion=0.2.0
 DefaultDirName={autopf}\DSH Harbor
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=..\artifacts\installer
-OutputBaseFilename=DSHHarborSetup-0.1.9
+OutputBaseFilename=DSHHarborSetup-0.2.0
 Compression=lzma2
 SolidCompression=yes
 ArchitecturesAllowed=x64compatible
