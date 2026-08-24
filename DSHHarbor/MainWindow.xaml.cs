@@ -64,7 +64,14 @@ public partial class MainWindow : Window
         try
         {
             var url = await _runtime.StartAsync(progress);
-            await Browser.EnsureCoreWebView2Async();
+            // WebView2 defaults to "<exe directory>\<exe name>.exe.WebView2", which is
+            // not writable when installed under Program Files (E_ACCESSDENIED).
+            // Pin it to our per-user data root instead.
+            Directory.CreateDirectory(AppPaths.WebView2DataDirectory);
+            var environment = await CoreWebView2Environment.CreateAsync(
+                browserExecutableFolder: null,
+                userDataFolder: AppPaths.WebView2DataDirectory);
+            await Browser.EnsureCoreWebView2Async(environment);
             Browser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
             Browser.CoreWebView2.Settings.AreDevToolsEnabled = false;
             Browser.Source = new Uri(url);
