@@ -23,4 +23,5 @@ internal static class AppPaths
     public static readonly string WebView2DataDirectory = Path.Combine(Root, "WebView2");
     public static readonly string CacheDirectory = Path.Combine(Root, "cache");
     public static readonly string UpdateStateFile = Path.Combine(Root, "update-state.json");
+    public static readonly string UpdateDownloadDirectory = Path.Combine(Root, "updates");
 }

@@ -6,6 +6,15 @@ internal sealed class UpdateState
 {
     public DateTimeOffset? LastHarnessUpdateCheckUtc { get; set; }
 
+    /// <summary>已下载、等待安装的应用更新版本号。</summary>
+    public string? PendingAppUpdateVersion { get; set; }
+
+    /// <summary>已下载的更新安装包完整路径。</summary>
+    public string? PendingAppUpdateInstallerPath { get; set; }
+
+    /// <summary>安装包下载完成的时间。</summary>
+    public DateTimeOffset? PendingAppUpdateDownloadedUtc { get; set; }
+
     public static UpdateState Load()
     {
         try
