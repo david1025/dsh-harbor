@@ -16,6 +16,7 @@ DSH Harbor 是一个非官方的 Windows 桌面启动器，用于运行 [DeepSee
 ## 主要特性
 
 - **一键安装**——首次启动时自动下载并准备 Node.js 和 DeepSeek Harness。
+- **轻量安装包**——安装程序本身不到 3 MB。
 - **内置 Web 界面**——在本机启动 Harness Web 服务，并显示在原生 WPF 窗口中。
 - **Node.js 自动选择**——优先使用兼容的系统 Node.js；未检测到时自动下载并校验内置运行时。
 - **国内镜像支持**——通过阿里云 npmmirror 安装 npm 软件包。
@@ -24,10 +25,12 @@ DSH Harbor 是一个非官方的 Windows 桌面启动器，用于运行 [DeepSee
 - **可视化启动诊断**——显示安装和启动进度；失败时提供重试和打开日志目录操作。
 - **可靠清理子进程**——使用 Windows Job Object，在退出 DSH Harbor 时一并终止 Harness 服务及其子进程。
 - **安全的版本检查**——每天最多检查一次 Harness 新版本，同时继续使用经过测试的固定版本。
+- **x64 与 ARM64 双架构安装包**——为 Intel/AMD 电脑和 ARM64 Windows 设备分别提供安装程序。
+- **应用内自动更新**——后台检查 GitHub Releases，按 CPU 架构下载对应安装包（校验 SHA-256），完成后询问是否安装；推迟的更新会在下次启动时自动应用。
 
 ## 系统要求
 
-- Windows 10 或 Windows 11，兼容 x64
+- Windows 10 或 Windows 11（x64 或 ARM64）
 - 首次启动时能够访问互联网
 - 安装程序需要管理员权限
 - Microsoft Edge WebView2 Runtime
@@ -37,14 +40,28 @@ DSH Harbor 是一个非官方的 Windows 桌面启动器，用于运行 [DeepSee
 
 ## 安装方法
 
-1. 从仓库的 **Releases** 页面下载最新的 `DSHHarborSetup-*.exe`。
-2. 运行安装程序。
-3. 从开始菜单或桌面快捷方式启动 **DSH Harbor**。
-4. 等待首次初始化完成。安装 Harness 后，应用可能会自动重启一次。
+从 [Releases](https://github.com/david1025/dsh-harbor/releases) 页面下载与设备匹配的安装程序，或直接打开[最新版本](https://github.com/david1025/dsh-harbor/releases/latest)。两个架构的安装包均不到 3 MB：
+
+| 架构 | 安装程序 |
+| --- | --- |
+| x64（Intel/AMD 处理器） | `DSHHarborSetup-<版本号>.exe` |
+| ARM64（如搭载骁龙芯片的 Windows 设备） | `DSHHarborSetup-<版本号>-arm64.exe` |
+
+ARM64 设备也可以通过模拟运行 x64 安装程序，但建议优先使用原生 ARM64 安装包。
+
+接下来：
+
+1. 运行安装程序。
+2. 从开始菜单或桌面快捷方式启动 **DSH Harbor**。
+3. 等待首次初始化完成。安装 Harness 后，应用可能会自动重启一次。
 
 当前版本首次初始化时会安装经过测试的 `@deepseek-ai/dsh@0.1.1-rc.2`，后续启动会复用本地安装。
 
 > 安装程序目前没有 Authenticode 数字签名。在加入代码签名证书之前，Windows SmartScreen 可能显示“未知发布者”警告。
+
+### 应用自动更新
+
+运行环境就绪后，DSH Harbor 会在后台检查 GitHub Releases。发现新版本时，会按 CPU 架构下载对应的安装包，校验 SHA-256 和文件大小后，询问是否立即安装。如果推迟更新，已下载的安装包会保留，并在下次启动或下次手动检查时自动安装。你也可以随时从托盘菜单手动触发检查。当 GitHub API 触发限流时，DSH Harbor 会回退为打开 Releases 页面，供手动下载。
 
 ## 工作原理
 
@@ -80,6 +97,7 @@ DSH Harbor 将运行数据保存在：
 | `harness\` | 由 pnpm 管理的 DeepSeek Harness 安装目录 |
 | `harness\home\` | 当前 `DSH_HOME`、profiles 和 Harness 用户数据 |
 | `runtime\` | 未找到兼容系统 Node.js 时使用的内置 Node.js |
+| `WebView2\` | WebView2 浏览器用户数据目录，固定在每用户目录下以保证 Program Files 中也可写 |
 | `cache\` | 下载缓存 |
 | `logs\launcher.log` | 安装、初始化和桌面启动器诊断日志 |
 | `logs\dsh.log` | Harness 进程输出和启动错误 |
@@ -91,7 +109,7 @@ DSH Harbor 将运行数据保存在：
 
 ### 关闭窗口后应用不见了
 
-关闭主窗口只会将 DSH Harbor 隐藏到系统托盘。双击托盘图标可以重新打开；托盘菜单还可从 GitHub Releases 检查版本更新、查看包含 Harness 与 Node.js 实际版本的“关于”信息，或选择“退出”来彻底停止 Harness。
+关闭主窗口只会将 DSH Harbor 隐藏到系统托盘。双击托盘图标可以重新打开；托盘菜单还可手动检查版本更新（平时会在后台自动检查并下载），查看包含 Harness 与 Node.js 实际版本的“关于”信息，或选择“退出”来彻底停止 Harness。
 
 ### 首次启动失败
 
@@ -112,7 +130,7 @@ DSH Harbor 将运行数据保存在：
 
 - Visual Studio 2022，或带 Windows 桌面开发工具的 .NET 10 SDK
 - Microsoft Edge WebView2 Runtime
-- 使用当前安装器配置时需要 Windows x64
+- 使用当前安装器配置时需要 Windows x64（ARM64 安装包在 x64 上交叉编译）
 
 ### 构建和运行
 
@@ -131,15 +149,18 @@ dotnet publish .\DSHHarbor\DSHHarbor.csproj `
   -o .\artifacts\win-x64
 ```
 
+如需 ARM64 版本，使用 `-r win-arm64` 交叉编译，并输出到 `.\artifacts\win-arm64`。
+
 ### 构建安装程序
 
 仓库中包含当前打包流程使用的 Inno Setup 命令行编译器：
 
 ```powershell
 .\tools\InnoSetup\ISCC.exe .\installer\DSHHarbor.iss
+.\tools\InnoSetup\ISCC.exe .\installer\DSHHarbor.arm64.iss
 ```
 
-生成的安装程序位于 `artifacts\installer\`。
+生成的安装程序位于 `artifacts\installer\`。推送 `v*` 标签会触发 CI 工作流，自动构建两个架构的安装包并发布 GitHub Release。
 
 ## 项目结构
 

@@ -16,6 +16,7 @@ The goal is simple: make DeepSeek Harness feel like a regular Windows applicatio
 ## Highlights
 
 - **One-click setup** — downloads and prepares Node.js and DeepSeek Harness on first launch.
+- **Featherweight** — the installer itself is under 3 MB.
 - **Integrated Web UI** — runs the Harness Web interface locally and opens it inside a native WPF window.
 - **Portable Node.js fallback** — uses a compatible system Node.js installation when available, or downloads a verified Node.js runtime automatically.
 - **China-friendly package downloads** — installs npm packages through Alibaba Cloud's npmmirror registry.
@@ -24,10 +25,12 @@ The goal is simple: make DeepSeek Harness feel like a regular Windows applicatio
 - **Visible bootstrap diagnostics** — shows installation and startup progress, with retry and log-folder shortcuts when something fails.
 - **Clean process shutdown** — uses a Windows Job Object so exiting DSH Harbor also terminates the local Harness server and its child processes.
 - **Safe update checks** — checks the npm mirror for a newer Harness version at most once per day while continuing to use the pinned, tested version.
+- **x64 and ARM64 installers** — separate setup packages for Intel/AMD PCs and ARM64 Windows devices.
+- **In-app auto-update** — checks GitHub Releases in the background, downloads the installer matching the CPU architecture (SHA-256 verified), and offers to install it; a postponed update is applied automatically at the next launch.
 
 ## Requirements
 
-- Windows 10 or Windows 11, x64-compatible
+- Windows 10 or Windows 11 on x64 or ARM64
 - Internet access during the first launch
 - Administrator permission for the installer
 - Microsoft Edge WebView2 Runtime
@@ -37,14 +40,28 @@ The installer detects WebView2 and the .NET Desktop Runtime and downloads them w
 
 ## Installation
 
-1. Download the latest `DSHHarborSetup-*.exe` from the repository's **Releases** page.
-2. Run the installer.
-3. Start **DSH Harbor** from the Start menu or desktop shortcut.
-4. Wait for the first-run bootstrap to finish. The application may restart itself once after installing Harness.
+Download the installer that matches your device from the [Releases](https://github.com/david1025/dsh-harbor/releases) page, or open the [latest release](https://github.com/david1025/dsh-harbor/releases/latest) directly. Both installers are under 3 MB:
+
+| Architecture | Installer |
+| --- | --- |
+| x64 (Intel/AMD processors) | `DSHHarborSetup-<version>.exe` |
+| ARM64 (e.g. Snapdragon-powered Windows devices) | `DSHHarborSetup-<version>-arm64.exe` |
+
+ARM64 devices can also run the x64 installer through emulation, but the native ARM64 package is recommended.
+
+Then:
+
+1. Run the installer.
+2. Start **DSH Harbor** from the Start menu or desktop shortcut.
+3. Wait for the first-run bootstrap to finish. The application may restart itself once after installing Harness.
 
 The initial bootstrap installs the currently tested Harness release, `@deepseek-ai/dsh@0.1.1-rc.2`. Later launches reuse the local installation.
 
 > The installer is not currently Authenticode-signed. Windows SmartScreen may show an unknown-publisher warning until a code-signing certificate is added.
+
+### Application updates
+
+Once the runtime is ready, DSH Harbor checks GitHub Releases in the background. When a newer version is found, it downloads the installer that matches the CPU architecture, verifies its SHA-256 checksum and size, and asks whether to install it immediately. If you postpone the update, the downloaded installer is kept and applied automatically at the next launch or the next manual check. You can also trigger a check at any time from the tray menu. When the GitHub API is rate-limited, DSH Harbor falls back to opening the Releases page for a manual download.
 
 ## How it works
 
@@ -80,6 +97,7 @@ Installations upgraded from the former **DSH Desktop** name continue using the l
 | `harness\` | The pnpm-managed DeepSeek Harness installation |
 | `harness\home\` | Active `DSH_HOME`, profiles, and Harness user data |
 | `runtime\` | Bundled Node.js runtime, when a compatible system Node.js is unavailable |
+| `WebView2\` | WebView2 browser profile data, kept in a per-user location so it stays writable under Program Files |
 | `cache\` | Download cache |
 | `logs\launcher.log` | Installer, bootstrap, and launcher diagnostics |
 | `logs\dsh.log` | Harness process output and startup errors |
@@ -91,7 +109,7 @@ You can open the log directory directly from the startup error screen.
 
 ### The window disappears when I close it
 
-Closing the main window hides DSH Harbor to the system tray. Double-click the tray icon to reopen it. The tray menu can also check GitHub Releases for application updates, show an About dialog with the installed Harness and Node.js versions, or stop Harness completely with **Exit**.
+Closing the main window hides DSH Harbor to the system tray. Double-click the tray icon to reopen it. The tray menu can also check for application updates manually (they are otherwise checked and downloaded automatically in the background), show an About dialog with the installed Harness and Node.js versions, or stop Harness completely with **Exit**.
 
 ### First launch fails
 
@@ -112,7 +130,7 @@ Version 0.1.8 and later use the ancestor `node_modules` layout described above. 
 
 - Visual Studio 2022 or the .NET 10 SDK with Windows desktop tooling
 - Microsoft Edge WebView2 Runtime
-- Windows x64 for building the provided installer configuration
+- Windows x64 for building the provided installer configurations (the ARM64 package is cross-compiled from x64)
 
 ### Build and run
 
@@ -131,15 +149,18 @@ dotnet publish .\DSHHarbor\DSHHarbor.csproj `
   -o .\artifacts\win-x64
 ```
 
+For ARM64 devices, cross-compile with `-r win-arm64` and output to `.\artifacts\win-arm64`.
+
 ### Build the installer
 
 The repository includes the Inno Setup command-line compiler used by the current packaging workflow:
 
 ```powershell
 .\tools\InnoSetup\ISCC.exe .\installer\DSHHarbor.iss
+.\tools\InnoSetup\ISCC.exe .\installer\DSHHarbor.arm64.iss
 ```
 
-The generated installer is written to `artifacts\installer\`.
+The generated installers are written to `artifacts\installer\`. Pushing a `v*` tag runs the CI workflow, which builds both installers and publishes them as a GitHub Release automatically.
 
 ## Project structure
 
