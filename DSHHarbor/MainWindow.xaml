@@ -1,0 +1,35 @@
+<Window x:Class="DSHHarbor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="DSH Harbor — DeepSeek Harness" Icon="Assets/dsh-harbor.ico"
+        Height="820" Width="1280" MinHeight="620" MinWidth="900"
+        WindowStartupLocation="CenterScreen" Background="#101828">
+  <Grid>
+    <wv2:WebView2 x:Name="Browser" Visibility="Collapsed" />
+
+    <Grid x:Name="BootstrapView" Background="#101828">
+      <Border Width="540" Padding="42" Background="#172033" CornerRadius="16"
+              HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel>
+          <TextBlock Text="DSH Harbor" FontSize="28" FontWeight="SemiBold" Foreground="White" />
+          <TextBlock Text="正在准备本地运行环境" Margin="0,10,0,28" FontSize="15" Foreground="#B8C5D9" />
+          <ProgressBar x:Name="Progress" Height="8" IsIndeterminate="True" Foreground="{StaticResource AccentBrush}" />
+          <TextBlock x:Name="StatusText" Margin="0,20,0,0" TextWrapping="Wrap" Foreground="#E6EDF7" FontSize="14" />
+          <TextBlock x:Name="DetailText" Margin="0,9,0,24" TextWrapping="Wrap" Foreground="#94A3B8" FontSize="12" />
+          <Expander Header="显示执行详情" Foreground="#CBD5E1" Margin="0,0,0,20">
+            <Border Margin="0,10,0,0" Padding="10" Background="#0B1220" CornerRadius="6">
+              <TextBox x:Name="DiagnosticOutput" Height="170" IsReadOnly="True" BorderThickness="0"
+                       Background="Transparent" Foreground="#B8C5D9" FontFamily="Consolas" FontSize="11"
+                       TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" />
+            </Border>
+          </Expander>
+          <StackPanel x:Name="FailureActions" Orientation="Horizontal" Visibility="Collapsed">
+            <Button Content="重试" Click="Retry_Click" />
+            <Button Content="打开日志目录" Click="OpenLogs_Click" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </Grid>
+  </Grid>
+</Window>
