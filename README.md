@@ -13,6 +13,19 @@ DSH Harbor is an unofficial Windows desktop launcher for [DeepSeek Harness](http
 
 The goal is simple: make DeepSeek Harness feel like a regular Windows application—without asking users to install Node.js, configure pnpm, or manage terminal processes by hand.
 
+## Screenshots
+
+<table>
+  <tr>
+    <th width="50%">Installing DeepSeek Harness</th>
+    <th width="50%">Main window</th>
+  </tr>
+  <tr>
+    <td><img src="screenshot/install.png" alt="Installing DeepSeek Harness" width="100%"></td>
+    <td><img src="screenshot/main_window.png" alt="DSH Harbor main window" width="100%"></td>
+  </tr>
+</table>
+
 ## Highlights
 
 - **One-click setup** — downloads and prepares Node.js and DeepSeek Harness on first launch.

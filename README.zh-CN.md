@@ -13,6 +13,19 @@ DSH Harbor 是一个非官方的 Windows 桌面启动器，用于运行 [DeepSee
 
 项目的目标很直接：让 DeepSeek Harness 像普通 Windows 应用一样易于安装和使用，无需用户手动安装 Node.js、配置 pnpm 或管理终端进程。
 
+## 界面截图
+
+<table>
+  <tr>
+    <th width="50%">安装 DeepSeek Harness</th>
+    <th width="50%">主界面</th>
+  </tr>
+  <tr>
+    <td><img src="screenshot/install.png" alt="正在安装 DeepSeek Harness" width="100%"></td>
+    <td><img src="screenshot/main_window.png" alt="DSH Harbor 主界面" width="100%"></td>
+  </tr>
+</table>
+
 ## 主要特性
 
 - **一键安装**——首次启动时自动下载并准备 Node.js 和 DeepSeek Harness。
